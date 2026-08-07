@@ -1,0 +1,44 @@
+[package]
+name = "rustpol"
+version = "0.1.0"
+edition = "2021"
+description = "A from-scratch, axum-style web framework built directly on Hyper + Tower, with a full-stack todo app on top"
+license = "GPL-3.0-only"
+
+# ---------------------------------------------------------------------------
+# This crate is BOTH a library (the framework, in src/lib.rs and submodules)
+# and a binary (the demo full-stack app, in src/main.rs).
+#
+# Why each dependency is here (full reasoning in README.md):
+#   hyper            -> the raw HTTP/1 protocol engine (server side)
+#   hyper-util       -> runtime glue: TokioIo adapter + TowerToHyperService
+#   http             -> the Request/Response/Uri/HeaderMap *types* (no I/O)
+#   http-body-util   -> Body helpers (Full, BodyExt::collect) for bodies
+#   tower            -> the Service/Layer middleware abstraction
+#   tokio            -> the async runtime that drives the futures + the socket
+#   bytes            -> cheap, refcounted byte buffers (zero-copy slices)
+#   serde/serde_json -> typed (de)serialization for JSON extractors/responses
+# ---------------------------------------------------------------------------
+[dependencies]
+hyper = { version = "1", features = ["server", "http1"] }
+hyper-util = { version = "0.1", features = ["server", "server-graceful", "http1", "service", "tokio"] }
+http = "1"
+http-body-util = "0.1"
+tower = { version = "0.5", features = ["util", "limit"] }
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "sync", "time", "signal"] }
+bytes = "1"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[dev-dependencies]
+# The integration tests act as an HTTP *client* against our own server, so the
+# test build (and only the test build) pulls in hyper's client half.
+hyper = { version = "1", features = ["client", "http1"] }
+hyper-util = { version = "0.1", features = ["client", "client-legacy", "http1", "tokio"] }
+
+[profile.release]
+opt-level = "z"   # optimize for size, not raw speed (the "z" = squeeze)
+lto = true        # link-time optimization: lets the linker drop dead code across crates
+codegen-units = 1 # slower compile, smaller/faster output (no parallel-codegen seams)
+strip = true      # strip symbol/debug info from the binary
+panic = "abort"   # no unwinding tables -> smaller binary (we never catch_unwind)
