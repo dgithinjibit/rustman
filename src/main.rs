@@ -90,15 +90,15 @@ impl AppState {
 // ---------------------------------------------------------------------------
 
 const INDEX_HTML: &str = include_str!("../frontend/dist/index.html");
-const JS_BUNDLE: &str = include_str!("../frontend/dist/assets/index-Bmdue8mx.js");
-const CSS_BUNDLE: &str = include_str!("../frontend/dist/assets/index-6gpVMWfw.css");
+const JS_BUNDLE: &str = include_str!("../frontend/dist/assets/index-D1ldt4_i.js");
+const CSS_BUNDLE: &str = include_str!("../frontend/dist/assets/index-DTtk53ko.css");
 
 /// `GET /` — serve the modern Rustman desktop/web frontend.
 async fn index() -> Html<&'static str> {
     Html(INDEX_HTML)
 }
 
-/// `GET /assets/index-Bmdue8mx.js` — serve the compiled UI JavaScript bundle.
+/// `GET /assets/index-D1ldt4_i.js` — serve the compiled UI JavaScript bundle.
 async fn js_asset() -> Response<rustpol::body::Body> {
     let mut res = Response::new(rustpol::body::from(JS_BUNDLE));
     res.headers_mut().insert(
@@ -108,7 +108,7 @@ async fn js_asset() -> Response<rustpol::body::Body> {
     res
 }
 
-/// `GET /assets/index-6gpVMWfw.css` — serve the compiled UI CSS styles.
+/// `GET /assets/index-DTtk53ko.css` — serve the compiled UI CSS styles.
 async fn css_asset() -> Response<rustpol::body::Body> {
     let mut res = Response::new(rustpol::body::from(CSS_BUNDLE));
     res.headers_mut().insert(
@@ -163,8 +163,8 @@ async fn delete_todo(State(state): State<AppState>, Path(id): Path<u64>) -> Stat
 pub(crate) fn app(state: AppState) -> rustpol::routing::RouterService {
     Router::new()
         .route("/", get(index))
-        .route("/assets/index-Bmdue8mx.js", get(js_asset))
-        .route("/assets/index-6gpVMWfw.css", get(css_asset))
+        .route("/assets/index-D1ldt4_i.js", get(js_asset))
+        .route("/assets/index-DTtk53ko.css", get(css_asset))
         .route("/api/todos", get(list_todos).post(create_todo))
         .route("/api/todos/:id", put(toggle_todo).delete(delete_todo))
         .with_state(state)

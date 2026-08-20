@@ -46,9 +46,6 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
             R
           </div>
           <span className="text-sm font-semibold tracking-tight">RUSTMAN</span>
-          <span className="rounded border border-slate-200 bg-white px-1.5 py-0.5 text-[9px] font-mono text-slate-500">
-            v0.1.0-alpha
-          </span>
         </div>
 
         <div className="h-4 w-px bg-slate-300" />
@@ -75,7 +72,7 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
         </button>
       </div>
 
-      {/* Right Section: Environment Selector, Mock Engine, Telemetry Mode */}
+      {/* Right Section: Mock Server Toggle & Environment Selector */}
       <div className="flex items-center space-x-2">
         {/* Mock Server Controller */}
         <div
@@ -86,27 +83,17 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           }`}
         >
           <Server className="h-3.5 w-3.5 text-slate-500" />
-          <span>Mock Engine:</span>
-          <span className="font-mono text-[10px]">{mockState.port}</span>
+          <span>Mock Server</span>
+          <span className="font-mono text-[10px] text-slate-500">:{mockState.port}</span>
           <button
             onClick={onToggleMockServer}
-            className={`flex items-center space-x-1 rounded px-1.5 py-0.5 text-[10px] font-semibold transition ${
+            className={`flex items-center space-x-1 rounded px-1.5 py-0.5 text-[10px] font-medium transition ${
               mockState.running
                 ? 'bg-emerald-600 text-white hover:bg-emerald-700'
                 : 'bg-slate-200 text-slate-700 hover:bg-slate-300'
             }`}
           >
-            {mockState.running ? (
-              <>
-                <Square className="h-2.5 w-2.5 fill-current" />
-                <span>Running</span>
-              </>
-            ) : (
-              <>
-                <Play className="h-2.5 w-2.5 fill-current" />
-                <span>Start</span>
-              </>
-            )}
+            {mockState.running ? 'Running' : 'Start'}
           </button>
         </div>
 
@@ -138,12 +125,6 @@ export const HeaderBar: React.FC<HeaderBarProps> = ({
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
           </button>
-        </div>
-
-        {/* Engine status indicator */}
-        <div className="hidden lg:flex items-center space-x-1.5 rounded border border-slate-200 bg-white px-2 py-1 text-[11px] text-slate-600 shadow-subtle">
-          <Activity className="h-3.5 w-3.5 text-blue-600" />
-          <span className="font-mono text-[10px] text-slate-600">Hyper 1.x</span>
         </div>
       </div>
     </header>

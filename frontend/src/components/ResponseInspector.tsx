@@ -39,7 +39,7 @@ export const ResponseInspector: React.FC<ResponseInspectorProps> = ({
     return (
       <div className="flex h-full flex-1 flex-col items-center justify-center border-l border-slate-200 bg-white text-slate-500">
         <RefreshCw className="h-6 w-6 animate-spin text-blue-600 mb-2" />
-        <span className="font-mono text-[11px]">Executing request via Hyper client...</span>
+        <span className="font-mono text-[11px]">Executing request...</span>
       </div>
     );
   }
@@ -244,7 +244,7 @@ export const ResponseInspector: React.FC<ResponseInspectorProps> = ({
                 Network Lifecycle Telemetry
               </span>
               <p className="text-[11px] text-slate-600 mt-0.5">
-                Zero-copy connection and socket timings captured by the native Hyper engine.
+                Request and connection timing breakdown.
               </p>
             </div>
 
@@ -298,9 +298,9 @@ export const ResponseInspector: React.FC<ResponseInspectorProps> = ({
                 </div>
               </div>
               <div className="rounded border border-slate-200 bg-white p-2.5">
-                <span className="text-[10px] font-medium text-slate-500">Memory Allocation</span>
-                <div className="font-mono text-sm font-bold text-emerald-700">
-                  Zero-Copy (&lt; 2 KB)
+                <span className="text-[10px] font-medium text-slate-500">Headers Count</span>
+                <div className="font-mono text-sm font-bold text-slate-900">
+                  {headersList.length}
                 </div>
               </div>
             </div>

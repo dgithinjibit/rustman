@@ -122,7 +122,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           <button
             onClick={() => onSelectTab('mock')}
-            title="Embedded Mock Engine (Rustpol)"
+            title="Mock Server"
             className={`flex h-8 w-8 items-center justify-center rounded transition ${
               activeTab === 'mock'
                 ? 'bg-white text-blue-600 shadow-subtle'
@@ -134,7 +134,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           <button
             onClick={() => onSelectTab('history')}
-            title="Request Execution History"
+            title="History"
             className={`flex h-8 w-8 items-center justify-center rounded transition ${
               activeTab === 'history'
                 ? 'bg-white text-blue-600 shadow-subtle'
@@ -146,7 +146,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           <button
             onClick={() => onSelectTab('codegen')}
-            title="Code Exporter (Rust, cURL, TS, Go)"
+            title="Code Exporter"
             className={`flex h-8 w-8 items-center justify-center rounded transition ${
               activeTab === 'codegen'
                 ? 'bg-white text-blue-600 shadow-subtle'
@@ -156,8 +156,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <Code2 className="h-4 w-4" />
           </button>
         </div>
-
-        <div className="text-[9px] font-mono text-slate-400">FS</div>
       </div>
 
       {/* Pane Content Area */}
@@ -358,13 +356,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         )}
 
-        {/* TAB 3: EMBEDDED MOCK ENGINE */}
+        {/* TAB 3: MOCK SERVER */}
         {activeTab === 'mock' && (
           <div className="flex h-full flex-col p-2.5">
             <div className="flex items-center justify-between pb-2 border-b border-slate-200">
               <div>
                 <span className="font-semibold uppercase tracking-wider text-slate-500 text-[10px]">
-                  Local Mock Routes
+                  Mock Routes
                 </span>
                 <div className="text-[11px] text-slate-600 font-mono">
                   http://127.0.0.1:{mockState.port}
@@ -433,7 +431,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               {mockState.logs.length > 0 && (
                 <div className="mt-4 border-t border-slate-200 pt-2">
                   <span className="font-semibold uppercase tracking-wider text-slate-500 text-[10px]">
-                    Live Server Logs ({mockState.logs.length})
+                    Server Logs ({mockState.logs.length})
                   </span>
                   <div className="mt-1 max-h-40 space-y-1 overflow-y-auto font-mono text-[9px]">
                     {mockState.logs.slice(0, 10).map((log) => (

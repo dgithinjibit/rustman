@@ -70,8 +70,7 @@ const INITIAL_MOCK_ROUTES: MockRoute[] = [
     responseBody: JSON.stringify(
       {
         status: 'healthy',
-        engine: 'rustpol (Hyper 1.x + Tokio)',
-        idle_ram_kb: 1420,
+        service: 'api-gateway',
         uptime_seconds: 14820,
       },
       null,
@@ -464,25 +463,6 @@ export function App() {
           isLoading={isLoading}
         />
       </div>
-
-      {/* 3. Bottom Status Strip */}
-      <footer className="flex h-6 w-full items-center justify-between border-t border-slate-200 bg-surface-100 px-3 text-[10px] text-slate-600">
-        <div className="flex items-center space-x-3">
-          <span className="font-mono font-medium">Rust Core: Hyper 1.x + Tower</span>
-          <span className="text-slate-300">|</span>
-          <span className="font-mono">
-            Mock Engine:{' '}
-            <span className={mockState.running ? 'text-emerald-700 font-semibold' : 'text-slate-500'}>
-              {mockState.running ? `Listening :${mockState.port}` : 'Stopped'}
-            </span>
-          </span>
-        </div>
-        <div className="flex items-center space-x-3">
-          <span>Tauri Desktop Bridge: Ready</span>
-          <span className="text-slate-300">|</span>
-          <span className="font-mono">Memory: ~14.2 MB</span>
-        </div>
-      </footer>
 
       {/* Modals */}
       <EnvironmentModal
