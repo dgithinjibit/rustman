@@ -1,0 +1,31 @@
+[package]
+name = "rustman-desktop"
+version = "0.1.0"
+description = "High-performance, lightweight Postman alternative built on Tauri & Hyper"
+edition = "2021"
+
+[lib]
+name = "rustman_desktop_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tokio = { version = "1", features = ["rt-multi-thread", "macros", "net", "sync", "time"] }
+hyper = { version = "1", features = ["client", "http1", "server"] }
+hyper-util = { version = "0.1", features = ["client", "client-legacy", "server", "http1", "tokio"] }
+http = "1"
+http-body-util = "0.1"
+bytes = "1"
+rustpol = { path = ".." }
+
+[profile.release]
+opt-level = "z"
+lto = true
+strip = true
+codegen-units = 1
+panic = "abort"
