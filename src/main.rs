@@ -89,9 +89,33 @@ impl AppState {
 // Handlers — each one is a plain async fn taking extractors
 // ---------------------------------------------------------------------------
 
-/// `GET /` — serve the single-page frontend.
+const INDEX_HTML: &str = include_str!("../frontend/dist/index.html");
+const JS_BUNDLE: &str = include_str!("../frontend/dist/assets/index-D1ldt4_i.js");
+const CSS_BUNDLE: &str = include_str!("../frontend/dist/assets/index-DTtk53ko.css");
+
+/// `GET /` — serve the modern Rustman desktop/web frontend.
 async fn index() -> Html<&'static str> {
     Html(INDEX_HTML)
+}
+
+/// `GET /assets/index-D1ldt4_i.js` — serve the compiled UI JavaScript bundle.
+async fn js_asset() -> Response<rustpol::body::Body> {
+    let mut res = Response::new(rustpol::body::from(JS_BUNDLE));
+    res.headers_mut().insert(
+        http::header::CONTENT_TYPE,
+        http::HeaderValue::from_static("application/javascript; charset=utf-8"),
+    );
+    res
+}
+
+/// `GET /assets/index-DTtk53ko.css` — serve the compiled UI CSS styles.
+async fn css_asset() -> Response<rustpol::body::Body> {
+    let mut res = Response::new(rustpol::body::from(CSS_BUNDLE));
+    res.headers_mut().insert(
+        http::header::CONTENT_TYPE,
+        http::HeaderValue::from_static("text/css; charset=utf-8"),
+    );
+    res
 }
 
 /// `GET /api/todos` — list all todos as JSON.
@@ -139,6 +163,8 @@ async fn delete_todo(State(state): State<AppState>, Path(id): Path<u64>) -> Stat
 pub(crate) fn app(state: AppState) -> rustpol::routing::RouterService {
     Router::new()
         .route("/", get(index))
+        .route("/assets/index-D1ldt4_i.js", get(js_asset))
+        .route("/assets/index-DTtk53ko.css", get(css_asset))
         .route("/api/todos", get(list_todos).post(create_todo))
         .route("/api/todos/:id", put(toggle_todo).delete(delete_todo))
         .with_state(state)
@@ -165,84 +191,3 @@ async fn main() -> Result<(), Box<dyn std::error::Error + Send + Sync>> {
 
     rustpol::server::serve_with_shutdown("127.0.0.1:3000", service, shutdown).await
 }
-
-// ---------------------------------------------------------------------------
-// Frontend: one static HTML document with inline CSS + JS. Kept tiny on purpose
-// — it's here to prove the "full stack" runs from a single ~few-MB binary.
-// ---------------------------------------------------------------------------
-
-const INDEX_HTML: &str = r#"<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>rustpol todos</title>
-<style>
-  :root { color-scheme: light dark; }
-  body { font-family: system-ui, sans-serif; max-width: 38rem; margin: 3rem auto; padding: 0 1rem; }
-  h1 { font-size: 1.4rem; }
-  form { display: flex; gap: .5rem; margin-bottom: 1rem; }
-  input[type=text] { flex: 1; padding: .5rem; font-size: 1rem; }
-  button { padding: .5rem .8rem; font-size: 1rem; cursor: pointer; }
-  ul { list-style: none; padding: 0; }
-  li { display: flex; align-items: center; gap: .6rem; padding: .4rem 0; border-bottom: 1px solid #8884; }
-  li.done span { text-decoration: line-through; opacity: .55; }
-  li span { flex: 1; }
-  .del { background: transparent; border: none; font-size: 1.1rem; color: #c33; }
-  footer { margin-top: 2rem; font-size: .8rem; opacity: .6; }
-</style>
-</head>
-<body>
-  <h1>rustpol todos</h1>
-  <form id="new">
-    <input type="text" id="title" placeholder="What needs doing?" autocomplete="off" required>
-    <button type="submit">Add</button>
-  </form>
-  <ul id="list"></ul>
-  <footer>Served by a from-scratch Hyper + Tower framework. No Electron in sight.</footer>
-
-<script>
-const list = document.getElementById('list');
-
-async function load() {
-  const res = await fetch('/api/todos');
-  const todos = await res.json();
-  list.innerHTML = '';
-  for (const t of todos) {
-    const li = document.createElement('li');
-    if (t.done) li.className = 'done';
-    const span = document.createElement('span');
-    span.textContent = t.title;
-    span.onclick = () => toggle(t.id);
-    span.style.cursor = 'pointer';
-    const del = document.createElement('button');
-    del.className = 'del';
-    del.textContent = '✕';
-    del.onclick = () => remove(t.id);
-    li.append(span, del);
-    list.append(li);
-  }
-}
-
-document.getElementById('new').onsubmit = async (e) => {
-  e.preventDefault();
-  const input = document.getElementById('title');
-  const title = input.value.trim();
-  if (!title) return;
-  await fetch('/api/todos', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ title }),
-  });
-  input.value = '';
-  load();
-};
-
-async function toggle(id) { await fetch('/api/todos/' + id, { method: 'PUT' }); load(); }
-async function remove(id) { await fetch('/api/todos/' + id, { method: 'DELETE' }); load(); }
-
-load();
-</script>
-</body>
-</html>
-"#;
