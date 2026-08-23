@@ -270,6 +270,65 @@ preflight works against a browser client.
 
 ---
 
+## Phase 7 — CLI Usage & Headless Runner (2–3 days)
+
+**Goal:** Provide a fast, headless terminal interface and test runner (`rustman-cli` / `rustman run`) for CI/CD pipelines, automated testing, and terminal-first workflows without needing the desktop UI.
+
+- **Headless collection execution:** Run full collection suites, single endpoints, or mock assertions from the command line (`rustman run <collection.json> --env <env-name>`).
+- **Environment & variable overrides:** Pass environment files (`--env-file <path>`) or inline key-value overrides (`--var api_key=secret`).
+- **Multiple output formats:**
+  - Rich, ANSI-colored terminal output with status badges and microsecond duration summaries.
+  - Machine-readable `--json` output stream for shell scripting and piping into tools like `jq`.
+  - Standard `--reporter junit` XML / TAP output for seamless integration into GitHub Actions, GitLab CI, and other CI/CD test runners.
+  - `--export-curl` flag to output reproducible cURL commands directly to stdout.
+- **Interactive CLI / REPL mode:** Lightweight terminal prompt for ad-hoc requests, method picking, parameter editing, and quick inspection without spawning a window.
+- **Zero bloat:** Standalone binary (< 1.5 MB) leveraging the shared zero-copy Hyper 1.x / Tokio networking core.
+
+**Acceptance:** `rustman run ./collections/todos.json --env local` executes all requests and assertions headlessly, exits with code `0` on success and `1` on failed assertions, outputs JUnit reports, and runs within CI pipelines in under 100ms.
+
+---
+
+## Phase 8 — Collaborative Coding & Team Workspaces (4–6 days)
+
+**Goal:** Enable real-time pair API testing, synchronized team workspaces, and Git-native collaboration without centralized vendor lock-in.
+
+- **Git-native, local-first file synchronization:**
+  - Store collections, environments, and mock definitions in clean, human-readable, deterministic formats (`.json`, `.toml`, `.http`) to prevent merge conflicts in version control.
+  - Instant workspace re-indexing when files are modified externally via Git branches or team pulls.
+- **Live pair-testing & shared sessions:**
+  - Lightweight peer-to-peer or local WebSocket relay for live pair-debugging.
+  - Live session broadcasting: teammates can inspect live outgoing requests, stream incoming responses in real time, and view synchronized network waterfall telemetry.
+- **Team workspace management & RBAC:**
+  - Shared collection hierarchies with team-level and personal-level workspace scopes.
+  - Granular environment variable management: shared variables sync across the team, while sensitive credentials (bearer tokens, private API keys) are masked and remain strictly local to each developer.
+- **Live diffing & conflict resolution:** Visual side-by-side diffing between local workspace edits and upstream team changes before applying merges.
+
+**Acceptance:** Multiple engineers can connect to a shared workspace session, trigger requests, collaboratively inspect synchronized live response payloads and telemetry waterfalls, and cleanly version-control team collections in Git.
+
+---
+
+## Phase 9 — AI Integration: Request & Error/Success Diagnostics (3–5 days, feature-gated)
+
+**Goal:** Provide intelligent, context-aware explanations of HTTP requests, payload structures, network bottlenecks, and root-cause diagnostics for errors and successes.
+
+- **Request explanation & translation:**
+  - Natural language breakdown of complex HTTP requests: explains header semantics, authentication strategies (OAuth2, Bearer, HMAC), query parameters, and multipart/nested JSON body payloads in clear prose.
+  - Natural-language-to-request synthesis (e.g., convert "POST a new user with email and admin role to /users" into an executable request with appropriate headers and schema).
+- **Intelligent error & failure diagnostics:**
+  - Context-aware root-cause explanation for `4xx` client errors, `5xx` server exceptions, network drops, DNS failures, and TLS handshake issues.
+  - Actionable remediation suggestions: pinpoints the exact malformed header, invalid payload field, expired token, or CORS misconfiguration with concrete fix recommendations and patch previews.
+- **Success response & telemetry insights:**
+  - Automated analysis of `2xx` success responses: schema inference, response payload diffing, and detection of subtle contract drift across API revisions.
+  - Network telemetry analysis: AI-assisted performance diagnostics highlighting latency bottlenecks across DNS resolution, TCP handshake, TLS negotiation, and TTFB phases.
+- **Privacy-first & LLM provider agnostic:**
+  - Feature-gated (`--features ai`): zero AI dependency overhead in minimal builds.
+  - Bring-your-own-provider support: Google Gemini, OpenAI, Anthropic, or local offline inference (via Ollama / llama.cpp).
+  - Strict privacy guarantees: zero request or payload data logged or transmitted without explicit user trigger ("Explain Request" / "Diagnose Error" button).
+
+**Acceptance:** Clicking "Explain" on any request, response, or error triggers an instant, structured diagnostic pane detailing semantic intent, root cause of failures, and fix recommendations; builds cleanly without AI dependencies when the feature flag is disabled.
+
+---
+
 ## Priority & sequencing
 
 ```
@@ -281,12 +340,17 @@ Phase 3  Radix router (matchit)          ── correctness of shape, medium eff
 Phase 4  Panic/error policy              ── resolve the panic="abort" tension
 Phase 5  TLS + HTTP/2 (feature-gated)    ── opt-in, keep default tiny
 Phase 6  Observability + CORS polish     ── feature-gated niceties
+Phase 7  CLI Usage & Headless Runner     ── headless CI/CD & terminal workflows
+Phase 8  Collaborative Coding & Sync     ── real-time pair testing & team workspaces
+Phase 9  AI Diagnostics Integration      ── request explanation & error/success insights
 ```
 
 Rationale: Phases 0–1 are the difference between "demo" and "won't fall over."
 Phase 2 is the one that actually *earns* the low-RAM claim the README makes.
 Phases 3–4 improve shape and resilience. Phases 5–6 are strictly opt-in so the
-minimal binary never regresses.
+minimal binary never regresses. Phases 7–9 expand into headless CI/CD execution,
+team collaboration, and intelligent AI diagnostics while strictly preserving
+zero-bloat defaults.
 
 ---
 
