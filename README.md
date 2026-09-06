@@ -13,9 +13,10 @@
 > *why* that gap exists and *how* the Rust HTTP stack lets us close it.
 >
 > **Where we're headed:** see [`ROADMAP.md`](./ROADMAP.md) for the phased plan
-> to take this from a teaching prototype to a production-credible framework
-> (graceful shutdown, timeouts, streaming bodies, a radix router, opt-in
-> TLS/HTTP-2) — all without breaking the tiny-binary constraint.
+> to take this from a teaching prototype to a production-credible workbench and framework
+> (graceful shutdown, timeouts, streaming bodies, radix router, opt-in TLS/HTTP-2,
+> headless CLI execution, collaborative workspaces, and AI diagnostics) — all without
+> breaking the tiny-binary constraint.
 
 ---
 
@@ -581,7 +582,8 @@ inserts is what converts each library's specific error into our boxed error type
 The prototype above is a teaching framework. The plan to make it
 production-credible — graceful shutdown, read/idle timeouts and DoS hardening,
 streaming request/response bodies, a radix-trie router, an explicit panic
-policy, and opt-in (feature-gated) TLS + HTTP/2 — lives in its own document,
+policy, opt-in TLS + HTTP/2, headless CLI collection runner, collaborative
+pair-testing/workspaces, and AI request/error diagnostics — lives in its own document,
 kept phased and prioritized by impact vs binary-size cost:
 
 **→ [`ROADMAP.md`](./ROADMAP.md)**
